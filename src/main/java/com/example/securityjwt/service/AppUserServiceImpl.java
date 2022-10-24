@@ -1,0 +1,58 @@
+package com.example.securityjwt.service;
+
+import com.example.securityjwt.domain.AppUser;
+import com.example.securityjwt.domain.Role;
+import com.example.securityjwt.exception.NotFoundException;
+import com.example.securityjwt.repository.AppUserRepository;
+import com.example.securityjwt.repository.RoleRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+
+import java.util.List;
+
+
+@AllArgsConstructor
+@Service
+public class AppUserServiceImpl implements AppUserService {
+    private final AppUserRepository appUserRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+//    Logger log = LoggerFactory.getLogger(AppUserServiceImpl.class);
+    @Override
+    public AppUser saveAppUser(AppUser appUser) {
+//        log.info("Saving new user {}", appUser.getEmail());
+        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+        return appUserRepository.save(appUser);
+
+    }
+
+    @Override
+    public Role saveRole(Role role) {
+//        log.info("Saving new role {}", role.getName());
+        return roleRepository.save(role);
+    }
+
+    @Override
+    public void addRoleToAppUser(String email, String roleName) {
+//        log.info("Adding role {} to user {}", roleName,email);
+        AppUser appUser = appUserRepository.findAppUserByEmail(email).orElseThrow(()->new NotFoundException(email));
+        Role role  = roleRepository.findRoleByName(roleName).orElseThrow(()->new NotFoundException(roleName));
+        appUser.getRoles().add(role);
+        appUserRepository.save(appUser);
+    }
+
+    @Override
+    public AppUser getAppUser(String email) {
+//        log.info("Getting user by email {} ", email);
+        return appUserRepository.findAppUserByEmail(email).orElseThrow(()->new NotFoundException(email));
+    }
+
+    @Override
+    public List<AppUser> getAppUsers() {
+//        log.info("find users");
+        return appUserRepository.findAll();
+    }
+
+}

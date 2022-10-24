@@ -1,0 +1,27 @@
+server:
+  port: 8085
+
+spring:
+
+  application:
+    name: security-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/UserDB
+    username: postgres
+    password: westa852
+  sql:
+    init:
+      mode: always
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: true
+
